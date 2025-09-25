@@ -26,9 +26,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-# Local tooling
-gpt-conversation.yaml
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

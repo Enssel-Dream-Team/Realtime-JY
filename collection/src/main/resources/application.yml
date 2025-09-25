@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: collection
+  data:
+    mongodb:
+      database: ${COLLECTOR_MONGO_DATABASE:news}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+        spring.json.value.default.type: com.jongyeob.collection.messaging.kafka.RawIngestEvent
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+collector:
+  mongo:
+    database: ${COLLECTOR_MONGO_DATABASE:news}
+    collection: ${COLLECTOR_MONGO_COLLECTION:raw_docs}
+  topic:
+    raw-ingest: ${COLLECTOR_TOPIC_RAW_INGEST:ingest.raw.doc.v1}
+  rss:
+    poll-interval: PT5M
+    publishers:
+      - id: khan
+        source: ${COLLECTOR_RSS_KHAN_SOURCE:khan}
+        url: ${COLLECTOR_RSS_KHAN_URL:https://akngs.github.io/knews-rss/publishers/khan.xml}
+      - id: mediatoday
+        source: ${COLLECTOR_RSS_MEDIATODAY_SOURCE:mediatoday}
+        url: ${COLLECTOR_RSS_MEDIATODAY_URL:https://akngs.github.io/knews-rss/publishers/mediatoday.xml}

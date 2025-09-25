@@ -9,9 +9,18 @@ group = 'com.jongyeob'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// 소스 컴파일/실행 시 UTF-8 고정
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('bootRun') {
+    jvmArgs '-Dfile.encoding=UTF-8'
 }
 
 configurations {
