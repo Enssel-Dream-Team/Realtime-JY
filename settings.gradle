@@ -1,3 +1,6 @@
 rootProject.name = 'realtime'
 
-include(":collection")
+include(":ingest")
+include(":cleansing")
+include(":indexing")
+include(":serving")
