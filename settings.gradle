@@ -1,6 +1,2 @@
 rootProject.name = 'realtime'
-
-include(":ingest")
-include(":cleansing")
-include(":indexing")
-include(":serving")
+include 'ingest'

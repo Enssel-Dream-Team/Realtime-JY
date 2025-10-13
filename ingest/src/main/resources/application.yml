@@ -1,3 +1,47 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: ingest
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:batchmeta;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/realtime}
+      database: ${MONGODB_DATABASE:realtime}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    producer:
+      properties:
+        spring.json.add.type.headers: false
+
+ingest:
+  kafka:
+    topic: ${INGEST_KAFKA_TOPIC:ingest.cleansing.raw_docs}
+  schedule:
+    rss-cron: ${INGEST_SCHEDULE_RSS_CRON:0 0/30 * * * *}
+    wiki-cron: ${INGEST_SCHEDULE_WIKI_CRON:0 30 2 * * *}
+    youtube-cron: ${INGEST_SCHEDULE_YOUTUBE_CRON:0 */30 * * * *}
+
+youtube:
+  api-key: ${YOUTUBE_API_KEY:}
+  regionCode: ${YOUTUBE_REGION_CODE:KR}
+  maxResults: ${YOUTUBE_MAX_RESULTS:25}
+
+logging:
+  level:
+    com.realtime.ingest: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

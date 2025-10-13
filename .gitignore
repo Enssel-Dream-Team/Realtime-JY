@@ -38,3 +38,8 @@ gpt-conversation.yaml
 
 ### VS Code ###
 .vscode/
+
+# Environment files & local data
+.env
+data/
+logs/
