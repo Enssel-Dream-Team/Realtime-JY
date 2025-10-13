@@ -4,14 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
-import com.realtime.ingest.support.YamlPropertySourceFactory;
-
-@Configuration
 @ConfigurationProperties(prefix = "wikidump")
-@PropertySource(value = "classpath:dumps.yml", factory = YamlPropertySourceFactory.class)
 public class WikiDumpProperties {
 
     private List<Dump> dumps = Collections.emptyList();
