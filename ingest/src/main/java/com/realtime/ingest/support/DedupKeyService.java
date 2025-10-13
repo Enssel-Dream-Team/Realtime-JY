@@ -23,12 +23,14 @@ public class DedupKeyService {
 
     public synchronized String dedupKey(SourceType sourceType, String sourceId, String canonicalUrl) {
         digest.reset();
-        String material = sourceType.name().toLowerCase() + "#" + sourceId + "#" + canonicalUrl;
-        byte[] hash = digest.digest(material.getBytes(StandardCharsets.UTF_8));
+        String canonicalMaterial = canonicalUrl == null ? "" : canonicalUrl;
+        byte[] hash = digest.digest(canonicalMaterial.getBytes(StandardCharsets.UTF_8));
         StringBuilder hex = new StringBuilder(hash.length * 2);
         for (byte b : hash) {
             hex.append(String.format("%02x", b));
         }
-        return hex.toString();
+        String sourcePrefix = sourceType.name().toLowerCase();
+        String sourceIdentifier = sourceId == null ? "" : sourceId;
+        return sourcePrefix + "#" + sourceIdentifier + "#" + hex;
     }
 }

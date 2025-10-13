@@ -9,19 +9,20 @@ Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `r
 - 각 Step 은 `RawDocService` 로 저장을 위임하고 `JobLoggingListener` 가 실행 요약을 남깁니다.
 
 ## 저장 및 메시지 흐름
-1. `DedupKeyService` 가 canonical URL(`CanonicalUrlUtil`)을 기반으로 `source#sourceId#sha256(canonical)` 키를 생성
+1. `DedupKeyService` 가 canonical URL(`CanonicalUrlUtil`)을 기반으로 `source#sourceId#sha256(canonical)` 키를 생성합니다.
+   - canonical URL이 없으면 빈 문자열을 해시
 2. MongoDB `raw_docs` 컬렉션에 `@Id = dedup_key` 로 저장 (중복일 경우 저장 및 전송 스킵)
 3. Kafka 메시지 (`IngestRawDocMessage`) 발행
 
 ```json
 {
-  "dedup_key": "rss#yonhapnewstv#5d1e...",
+  "dedup_key": "rss#yonhapnewstv#100680ad546ce6a577f42f52df33b4cfdca756859e664b8d7de329b150d09ce9",
   "source": "rss",
   "source_id": "item-guid",
   "event_time": "2024-05-01T00:00:00Z",
   "ingest_time": "2024-05-01T00:05:00Z",
   "trace_id": "550e8400-e29b-41d4-a716-446655440000",
-  "mongo_ref": { "db":"realtime", "collection":"raw_docs", "_id":"rss#yonhapnewstv#5d1e..." }
+  "mongo_ref": { "db":"realtime", "collection":"raw_docs", "_id":"rss#yonhapnewstv#100680ad546ce6a577f42f52df33b4cfdca756859e664b8d7de329b150d09ce9" }
 }
 ```
 
