@@ -29,7 +29,8 @@ ingest:
   schedule:
     rss-cron: ${INGEST_SCHEDULE_RSS_CRON:0 0/30 * * * *}
     wiki-cron: ${INGEST_SCHEDULE_WIKI_CRON:0 30 2 * * *}
-    youtube-cron: ${INGEST_SCHEDULE_YOUTUBE_CRON:0 */30 * * * *}
+    youtube-initial-delay: ${INGEST_SCHEDULE_YOUTUBE_INITIAL_DELAY:PT1M}
+    youtube-fixed-delay: ${INGEST_SCHEDULE_YOUTUBE_FIXED_DELAY:PT30M}
 
 youtube:
   api-key: ${YOUTUBE_API_KEY:}

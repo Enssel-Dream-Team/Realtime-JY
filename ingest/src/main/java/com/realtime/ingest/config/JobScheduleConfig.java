@@ -23,7 +23,6 @@ public class JobScheduleConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
-
     public JobScheduleConfig(
         JobLauncher jobLauncher,
         JobRegistry jobRegistry
@@ -42,8 +41,12 @@ public class JobScheduleConfig {
         launchJob("wikiDumpJob");
     }
 
-    @Scheduled(cron = "${ingest.schedule.youtube-cron:0 */30 * * * *}")
+    @Scheduled(
+        initialDelayString = "${ingest.schedule.youtube-initial-delay:PT1M}",
+        fixedDelayString = "${ingest.schedule.youtube-fixed-delay:PT30M}"
+    )
     public void scheduleYoutubeJob() {
+        log.info("YouTube 수집 작업을 시작합니다");
         launchJob("youtubeIngestJob");
     }
 
