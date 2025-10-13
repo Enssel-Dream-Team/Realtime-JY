@@ -31,7 +31,7 @@ public class RssFeedClient {
         try {
             WebClient.RequestHeadersSpec<?> request = webClient.get()
                 .uri(url)
-                .header(HttpHeaders.ACCEPT, "application/rss+xml, application/xml");
+                .header(HttpHeaders.ACCEPT, "application/rss+xml, application/xml;q=0.9, text/xml;q=0.8");
             if (lastEtag != null) {
                 request.header(HttpHeaders.IF_NONE_MATCH, lastEtag);
             }
