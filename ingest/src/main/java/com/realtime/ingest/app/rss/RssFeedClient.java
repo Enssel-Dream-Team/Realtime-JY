@@ -1,10 +1,12 @@
 package com.realtime.ingest.app.rss;
 
 import java.io.StringReader;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
+
+import reactor.util.retry.Retry;
+import reactor.util.retry.RetryBackoffSpec;
 
 @Component
 public class RssFeedClient {
@@ -40,7 +46,21 @@ public class RssFeedClient {
                 request.header(HttpHeaders.IF_MODIFIED_SINCE, httpDate);
             }
 
-            ResponseEntity<String> response = request.exchangeToMono(clientResponse -> clientResponse.toEntity(String.class)).block();
+            int maxRetries = 3;
+            RetryBackoffSpec retrySpec = Retry.backoff(maxRetries, Duration.ofSeconds(1))
+                .maxBackoff(Duration.ofSeconds(5))
+                .filter(RssFeedClient::isRetryable)
+                .doBeforeRetry(retrySignal -> log.warn(
+                    "Retrying feed {} ({}/{}) due to {}",
+                    url,
+                    retrySignal.totalRetries() + 1,
+                    maxRetries,
+                    retrySignal.failure() != null ? retrySignal.failure().getMessage() : "unknown error"
+                ));
+
+            ResponseEntity<String> response = request.exchangeToMono(clientResponse -> clientResponse.toEntity(String.class))
+                .retryWhen(retrySpec)
+                .block();
 
             if (response == null
                 || response.getStatusCode().is3xxRedirection()
@@ -74,5 +94,10 @@ public class RssFeedClient {
     }
 
     public record RssFeedResponse(SyndFeed feed, String etag, Instant lastModified) {
+    }
+
+    private static boolean isRetryable(Throwable throwable) {
+        return throwable instanceof WebClientRequestException
+            || throwable instanceof TimeoutException;
     }
 }
