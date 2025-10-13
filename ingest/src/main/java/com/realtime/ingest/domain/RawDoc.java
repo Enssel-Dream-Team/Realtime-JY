@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "raw_docs")
@@ -17,6 +18,7 @@ public class RawDoc {
     private String title;
     private String content;
     private String originalUrl;
+    @Indexed(unique = true, sparse = true)
     private String canonicalUrl;
     private Instant eventTime;
     private Instant ingestTime;
