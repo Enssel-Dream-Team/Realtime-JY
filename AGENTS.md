@@ -40,9 +40,10 @@ Wiki Dump, 언론사별 기사, SNS API에서 데이터를 수집하여 실시�
 
 # Commit RULE
 - 모든 commit은 한국어로 작성 
-- commit 내용은 [개요], [작업 내용]를 포함
+- commit은 [제목], [개요], [작업 내용]를 포함
 
 
 # Codex CLI RULE
 - 모든 답변은 한국어로
 - 모든 질문에 대해 순차적 생각 사용
+- 이 파일을 읽었다면, "AGENTS.MD 스캔 완료" 문구 출력
