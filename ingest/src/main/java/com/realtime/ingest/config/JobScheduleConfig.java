@@ -13,6 +13,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,12 @@ public class JobScheduleConfig {
     ) {
         this.jobLauncher = jobLauncher;
         this.jobRegistry = jobRegistry;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void launchWikiJobOnStartup() {
+        log.info("애플리케이션 기동 완료 후 위키 덤프 작업을 실행합니다.");
+        launchJob("wikiDumpJob");
     }
 
     @Scheduled(cron = "${ingest.schedule.rss-cron:0 0/30 * * * *}")
