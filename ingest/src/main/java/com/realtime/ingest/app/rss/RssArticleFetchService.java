@@ -1,6 +1,7 @@
 package com.realtime.ingest.app.rss;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -17,10 +18,22 @@ import com.realtime.ingest.domain.SourceType;
 public class RssArticleFetchService {
 
     private static final Logger log = LoggerFactory.getLogger(RssArticleFetchService.class);
+    private static final String USER_AGENT = "RealtimeIngest/1.0";
+    private static final String ACCEPT_LANGUAGE = "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7";
+    private static final int REQUEST_TIMEOUT_MILLIS = (int) Duration.ofSeconds(10).toMillis();
 
     public Optional<RawDoc> fetchArticle(RssFeedEntry entry) {
         try {
-            Document document = Jsoup.connect(entry.link()).get();
+            if (entry.link() == null || entry.link().isBlank()) {
+                log.warn("RSS entry {} has no link. Skipping fetch.", entry.sourceId());
+                return Optional.empty();
+            }
+            Document document = Jsoup.connect(entry.link())
+                .userAgent(USER_AGENT)
+                .header("Accept-Language", ACCEPT_LANGUAGE)
+                .timeout(REQUEST_TIMEOUT_MILLIS)
+                .followRedirects(true)
+                .get();
             String title = document.title();
             String bodyText = document.body() != null ? document.body().text() : "";
 
