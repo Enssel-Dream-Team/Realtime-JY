@@ -26,12 +26,18 @@ public class RssItemReader implements ItemStreamReader<RssFeedEntry>, ItemStream
 
     private final RssFeedClient feedClient;
     private final RssFeedProperties feedProperties;
+    private final RssEntryIdGenerator entryIdGenerator;
     private Iterator<RssFeedEntry> iterator;
     private final Map<String, FeedState> runtimeState = new ConcurrentHashMap<>();
 
-    public RssItemReader(RssFeedClient feedClient, RssFeedProperties feedProperties) {
+    public RssItemReader(
+        RssFeedClient feedClient,
+        RssFeedProperties feedProperties,
+        RssEntryIdGenerator entryIdGenerator
+    ) {
         this.feedClient = feedClient;
         this.feedProperties = feedProperties;
+        this.entryIdGenerator = entryIdGenerator;
     }
 
     @Override
@@ -57,14 +63,11 @@ public class RssItemReader implements ItemStreamReader<RssFeedEntry>, ItemStream
                         return;
                     }
                     for (SyndEntry entry : response.feed().getEntries()) {
-                        String pointer = entry.getUri() != null ? entry.getUri() : entry.getLink();
-                        if (pointer == null) {
-                            pointer = String.valueOf(entry.hashCode());
-                        }
+                        String sourceId = entryIdGenerator.generate(feed, entry);
                         entries.add(
                             new RssFeedEntry(
                                 feed.getId(),
-                                feed.getId() + "-" + pointer,
+                                sourceId,
                                 entry.getTitle(),
                                 entry.getLink(),
                                 entry.getPublishedDate() != null ? entry.getPublishedDate().toInstant() : Instant.now()
