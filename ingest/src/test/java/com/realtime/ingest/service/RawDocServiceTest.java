@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 
 import com.realtime.ingest.domain.RawDoc;
 import com.realtime.ingest.domain.SourceType;
@@ -43,6 +45,9 @@ class RawDocServiceTest {
     void storeRawDoc_savesAndPublishesMessage() {
         when(repository.findByCanonicalUrl(any())).thenReturn(Optional.empty());
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        CompletableFuture<SendResult<String, Object>> future = new CompletableFuture<>();
+        future.complete(null);
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(future);
 
         RawDoc doc = new RawDoc();
         doc.setSource(SourceType.RSS);
@@ -75,5 +80,23 @@ class RawDocServiceTest {
         assertThat(result.isSaved()).isFalse();
         verify(repository, never()).save(any());
         verify(kafkaTemplate, never()).send(anyString(), anyString(), any());
+    }
+
+    @Test
+    void storeRawDoc_throwsWhenKafkaSendFails() {
+        when(repository.findByCanonicalUrl(any())).thenReturn(Optional.empty());
+        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        CompletableFuture<SendResult<String, Object>> future = new CompletableFuture<>();
+        future.completeExceptionally(new RuntimeException("kafka down"));
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(future);
+
+        RawDoc doc = new RawDoc();
+        doc.setSource(SourceType.RSS);
+        doc.setSourceId("yonhap-1");
+        doc.setOriginalUrl("https://example.com/news?id=1");
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> rawDocService.storeRawDoc(doc))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("Kafka 전송에 실패했습니다.");
     }
 }

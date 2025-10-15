@@ -3,6 +3,9 @@ package com.realtime.ingest.service;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +71,14 @@ public class RawDocService {
             UUID.randomUUID().toString(),
             mongoReference
         );
-        kafkaTemplate.send(topic, dedupKey, message);
-        log.debug("Sent message for raw doc {} to {}", dedupKey, topic);
+        try {
+            kafkaTemplate.send(topic, dedupKey, message).get(5, TimeUnit.SECONDS);
+            log.debug("Sent message for raw doc {} to {}", dedupKey, topic);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Kafka 전송 중 인터럽트가 발생했습니다.", e);
+        } catch (ExecutionException | TimeoutException e) {
+            throw new IllegalStateException("Kafka 전송에 실패했습니다.", e);
+        }
     }
 }
