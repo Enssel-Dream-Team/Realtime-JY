@@ -60,6 +60,8 @@ services:
       context: .
       dockerfile: ingest/Dockerfile
     container_name: ingest-app
+    env_file:
+      - .env
     depends_on:
       kafka:
         condition: service_healthy
