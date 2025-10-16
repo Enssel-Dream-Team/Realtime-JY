@@ -12,7 +12,8 @@ import com.realtime.ingest.support.YamlPropertySourceFactory;
 @EnableConfigurationProperties({
     RssFeedProperties.class,
     WikiDumpProperties.class,
-    YoutubeProperties.class
+    YoutubeProperties.class,
+    IngestKafkaTopicsProperties.class
 })
 public class PropertiesConfig {
 }

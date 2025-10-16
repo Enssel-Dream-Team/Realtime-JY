@@ -1,6 +1,6 @@
 # 수집 시스템 (ingest)
 
-Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `raw_docs` 컬렉션에 저장하고, Cleansing 모듈이 사용할 Kafka 토픽(`ingest.cleansing.raw_docs`)으로 이벤트를 발행하는 Spring Batch 기반 모듈입니다.
+Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `raw_docs` 컬렉션에 저장하고, Cleansing 모듈이 사용할 소스별 Kafka 토픽(`ingest.cleansing.raw_rss`, `ingest.cleansing.raw_wikidump`, `ingest.cleansing.raw_youtube`)으로 이벤트를 발행하는 Spring Batch 기반 모듈입니다.
 
 ## 배치 구성
 - **rssIngestJob** : `feeds.yml`에 정의된 RSS 피드를 순회하여 ROME 으로 메타데이터를 파싱하고, JSoup 으로 본문을 추출해 저장합니다.
@@ -30,6 +30,7 @@ Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `r
 - `application.yml`
   - `spring.data.mongodb.uri` / `spring.data.mongodb.database`
   - `spring.kafka.bootstrap-servers`
+  - `ingest.kafka.topics.rss`, `ingest.kafka.topics.wikidump`, `ingest.kafka.topics.youtube`
   - `ingest.schedule.rss-cron`, `ingest.schedule.wiki-cron`, `ingest.schedule.youtube-initial-delay`, `ingest.schedule.youtube-fixed-delay`
   - `youtube.api-key`, `youtube.channel-ids`, `youtube.max-results`
 - `feeds.yml` : RSS 피드 정의 (id/name/url)

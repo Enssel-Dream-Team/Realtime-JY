@@ -25,7 +25,10 @@ spring:
 
 ingest:
   kafka:
-    topic: ${INGEST_KAFKA_TOPIC:ingest.cleansing.raw_docs}
+    topics:
+      rss: ${INGEST_KAFKA_TOPIC_RSS:ingest.cleansing.raw_rss}
+      wikidump: ${INGEST_KAFKA_TOPIC_WIKIDUMP:ingest.cleansing.raw_wikidump}
+      youtube: ${INGEST_KAFKA_TOPIC_YOUTUBE:ingest.cleansing.raw_youtube}
   schedule:
     rss-cron: ${INGEST_SCHEDULE_RSS_CRON:0 0/30 * * * *}
     wiki-cron: ${INGEST_SCHEDULE_WIKI_CRON:0 30 2 * * *}

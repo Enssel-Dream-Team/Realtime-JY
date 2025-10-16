@@ -41,7 +41,10 @@
 
 - Ingest → Cleansing
 - group: 'ingest-cleanse-group'
-- topic: 'ingest.cleansing.raw_docs'
+- topics:
+    - rss: 'ingest.cleansing.raw_rss'
+    - wikidump: 'ingest.cleansing.raw_wikidump'
+    - youtube: 'ingest.cleansing.raw_youtube'
 - message:
     ```json
     {

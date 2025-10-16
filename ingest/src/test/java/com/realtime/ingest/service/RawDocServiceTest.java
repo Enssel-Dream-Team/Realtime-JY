@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
+import com.realtime.ingest.config.IngestKafkaTopicsProperties;
 import com.realtime.ingest.domain.RawDoc;
 import com.realtime.ingest.domain.SourceType;
 import com.realtime.ingest.repository.RawDocRepository;
@@ -35,10 +36,15 @@ class RawDocServiceTest {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private RawDocService rawDocService;
+    private IngestKafkaTopicsProperties kafkaTopics;
 
     @BeforeEach
     void setUp() {
-        rawDocService = new RawDocService(repository, new DedupKeyService(), kafkaTemplate, "topic");
+        kafkaTopics = new IngestKafkaTopicsProperties();
+        kafkaTopics.setRss("topic-rss");
+        kafkaTopics.setWikidump("topic-wikidump");
+        kafkaTopics.setYoutube("topic-youtube");
+        rawDocService = new RawDocService(repository, new DedupKeyService(), kafkaTemplate, kafkaTopics);
     }
 
     @Test
@@ -61,7 +67,27 @@ class RawDocServiceTest {
 
         assertThat(result.isSaved()).isTrue();
         verify(repository).save(any(RawDoc.class));
-        verify(kafkaTemplate).send(eq("topic"), anyString(), any());
+        verify(kafkaTemplate).send(eq("topic-rss"), anyString(), any());
+    }
+
+    @Test
+    void storeRawDoc_usesSourceSpecificTopic() {
+        when(repository.findByCanonicalUrl(any())).thenReturn(Optional.empty());
+        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        CompletableFuture<SendResult<String, Object>> future = new CompletableFuture<>();
+        future.complete(null);
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(future);
+
+        RawDoc doc = new RawDoc();
+        doc.setSource(SourceType.YOUTUBE);
+        doc.setSourceId("yt-1");
+        doc.setOriginalUrl("https://youtube.com/watch?v=1");
+        doc.setTitle("title");
+        doc.setContent("content");
+
+        rawDocService.storeRawDoc(doc);
+
+        verify(kafkaTemplate).send(eq("topic-youtube"), anyString(), any());
     }
 
     @Test
