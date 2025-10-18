@@ -7,7 +7,7 @@ COPY build.gradle settings.gradle ./
 COPY ingest ingest
 RUN chmod +x gradlew
 
-RUN ./gradlew :ingest:bootJar --no-daemon --no-cache
+RUN ./gradlew :ingest:bootJar --no-daemon --no-build-cache
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
