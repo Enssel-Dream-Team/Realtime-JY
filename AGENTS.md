@@ -12,7 +12,25 @@ Wiki Dump, 언론사별 기사, SNS API에서 데이터를 수집하여 실시�
     - 정제 파이프라인으로 전달할 Kafka 메시지를 전송한다. (Producer)
     - Spring Batch로 RSS/Wiki/Youtube 잡을 구성하고 스케줄러가 크론 기반으로 구동한다.
 2. (미구현) cleansing
-    - 수집 메시지를 소비하여 정제한다.
+    - Consume Kafka Topics(consuming 1000 messages/sec)
+      - Topics
+        - ingest.cleansing.raw_wikidump
+        - ingest.cleansing.raw_rss
+        - ingest.cleansing.raw_youtube
+      - Consumer Default Setting
+        - Number of Consumers: 5 consumers
+        - Enable a
+    - Cleansing Data
+      - Get data: Kafka topic provides the URI of the article's mongoDB
+      - Cleansing data: cleansing full context data using apache Tika
+        - remove HTML tags
+        - remove unnecessary blank(like \n, \r, \xa0)
+      - Store cleansed data
+        - store cleansed data in mongoDB
+      - Producing Kafka Message
+        - Topic: cleansing.indexing.(wikidump, rss, youtube)
+        - messages have mongoDB URI, not full data
+        - it will be used by indexing system
 3. (미구현) indexing
     - 정제 데이터를 검색 시스템으로 색인한다.
 4. (미구현) serving
@@ -41,9 +59,16 @@ Wiki Dump, 언론사별 기사, SNS API에서 데이터를 수집하여 실시�
 # Commit RULE
 - 모든 commit은 한국어로 작성 
 - commit은 [제목], [개요], [작업 내용]를 포함
-
+- 제목 형식: feat, chore, fix, test + 커밋명
+  - feat: Wiki Dump 수집 구현
+  - chore: Docker-compose 내용 변경
+  - fix: Mongo DB에 데이터가 들어가지 않는 문제 해결
+- 제목에 [제목]은 표시 하지 않음
+- [개요], [작업 내용] 다음에는 개행문자가 옴
 
 # Codex CLI RULE
 - 모든 답변은 한국어로
 - 모든 질문에 대해 순차적 생각 사용
-- 이 파일을 읽었다면, "AGENTS.MD 스캔 완료" 문구 출력
+  - 최소 생각 횟수: 2회
+  - 최대 생각 횟수: 자율 판단
+- 이 파일을 읽을 때마다 "AGENTS.MD 스캔 완료" 문구 출력
