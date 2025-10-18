@@ -32,6 +32,7 @@ Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `r
   - `spring.kafka.bootstrap-servers`
   - `ingest.kafka.topics.rss`, `ingest.kafka.topics.wikidump`, `ingest.kafka.topics.youtube`
   - `ingest.schedule.rss-cron`, `ingest.schedule.wiki-cron`, `ingest.schedule.youtube-initial-delay`, `ingest.schedule.youtube-fixed-delay`
+  - `ingest.mongo.pool.max-size`, `ingest.mongo.pool.min-size`, `ingest.mongo.pool.max-wait`
   - `youtube.api-key`, `youtube.channel-ids`, `youtube.max-results`
 - `feeds.yml` : RSS 피드 정의 (id/name/url)
 - `dumps.yml` : Wiki 덤프 파일 정의 (id/url/localPath)
