@@ -2,8 +2,7 @@ name: Deploy Ingest
 
 on:
   push:
-    branches:
-      - main
+    branches: ["develop"]
   workflow_dispatch:
 
 jobs:
@@ -26,7 +25,7 @@ jobs:
       - name: Run ingest tests
         run: ./gradlew :ingest:test
 
-      - name: Deploy to Oracle Compute
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
