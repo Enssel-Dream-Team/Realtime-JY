@@ -16,14 +16,14 @@ import com.realtime.ingest.support.JobLoggingListener;
 public class RssIngestJobConfig {
 
     @Bean
-    public Step rssIngestStep(
+    public Step rssStep(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
         RssItemReader reader,
         RssItemProcessor processor,
         RssItemWriter writer
     ) {
-        return new StepBuilder("rssIngestStep", jobRepository)
+        return new StepBuilder("rssStep", jobRepository)
             .<RssFeedEntry, RawDoc>chunk(16, transactionManager)
             .reader(reader)
             .processor(processor)
@@ -34,9 +34,9 @@ public class RssIngestJobConfig {
     }
 
     @Bean
-    public Job rssIngestJob(JobRepository jobRepository, Step rssIngestStep, JobLoggingListener jobLoggingListener) {
-        return new JobBuilder("rssIngestJob", jobRepository)
-            .start(rssIngestStep)
+    public Job rssJob(JobRepository jobRepository, Step rssStep, JobLoggingListener jobLoggingListener) {
+        return new JobBuilder("rssJob", jobRepository)
+            .start(rssStep)
             .listener(jobLoggingListener)
             .build();
     }

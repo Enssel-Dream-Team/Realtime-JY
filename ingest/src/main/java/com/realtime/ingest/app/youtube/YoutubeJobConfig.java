@@ -13,17 +13,17 @@ import com.realtime.ingest.domain.RawDoc;
 import com.realtime.ingest.support.JobLoggingListener;
 
 @Configuration
-public class YoutubeIngestJobConfig {
+public class YoutubeJobConfig {
 
     @Bean
-    public Step youtubeIngestStep(
+    public Step youtubeStep(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
         YoutubeItemReader reader,
         YoutubeItemProcessor processor,
         YoutubeItemWriter writer
     ) {
-        return new StepBuilder("youtubeIngestStep", jobRepository)
+        return new StepBuilder("youtubeStep", jobRepository)
             .<YoutubeVideo, RawDoc>chunk(16, transactionManager)
             .reader(reader)
             .processor(processor)
@@ -34,9 +34,9 @@ public class YoutubeIngestJobConfig {
     }
 
     @Bean
-    public Job youtubeIngestJob(JobRepository jobRepository, Step youtubeIngestStep, JobLoggingListener jobLoggingListener) {
-        return new JobBuilder("youtubeIngestJob", jobRepository)
-            .start(youtubeIngestStep)
+    public Job youtubeJob(JobRepository jobRepository, Step youtubeStep, JobLoggingListener jobLoggingListener) {
+        return new JobBuilder("youtubeJob", jobRepository)
+            .start(youtubeStep)
             .listener(jobLoggingListener)
             .build();
     }

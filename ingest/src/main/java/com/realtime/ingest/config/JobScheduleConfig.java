@@ -41,13 +41,14 @@ public class JobScheduleConfig {
 
     @Scheduled(cron = "${ingest.schedule.rss-cron:0 0/30 * * * *}")
     public void scheduleRssJob() {
-        launchJob("rssIngestJob");
+        log.info("RSS 수집 작업을 시작합니다.");
+        launchJob("rssJob");
     }
 
-    @Scheduled(cron = "${ingest.schedule.wiki-cron:0 30 2 * * *}")
-    public void scheduleWikiJob() {
-        launchJob("wikiDumpJob");
-    }
+    // @Scheduled(cron = "${ingest.schedule.wiki-cron:0 30 2 * * *}")
+    // public void scheduleWikiJob() {
+    //     launchJob("wikiDumpJob");
+    // }
 
     @Scheduled(
         initialDelayString = "${ingest.schedule.youtube-initial-delay:PT1M}",
@@ -55,7 +56,7 @@ public class JobScheduleConfig {
     )
     public void scheduleYoutubeJob() {
         log.info("YouTube 수집 작업을 시작합니다");
-        launchJob("youtubeIngestJob");
+        launchJob("youtubeJob");
     }
 
     private void launchJob(String jobName) {
@@ -66,11 +67,11 @@ public class JobScheduleConfig {
                 .toJobParameters();
             jobLauncher.run(job, parameters);
         } catch (NoSuchJobException e) {
-            log.warn("Job {} not registered yet. Skipping.", jobName);
+            log.warn("{} 잡이 등록되지 않았습니다. 스킵합니다.", jobName);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException e) {
-            log.warn("Job {} could not be launched: {}", jobName, e.getMessage());
+            log.warn("Job {} 잡을 시작하지 못했습니다.: {}", jobName, e.getMessage());
         } catch (Exception e) {
-            log.error("Unexpected error launching job {}", jobName, e);
+            log.error("잡 실행중 예상치 못한 문제가 발생하였습니다. {}", jobName, e);
         }
     }
 }
