@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.realtime.ingest.config.RssFeedProperties;
+import com.realtime.ingest.config.IngestProperties;
 import com.rometools.rome.feed.synd.SyndEntry;
 
 /**
@@ -15,7 +15,7 @@ import com.rometools.rome.feed.synd.SyndEntry;
 @Component
 public class RssEntryIdGenerator {
 
-    public String generate(RssFeedProperties.Feed feed, SyndEntry entry) {
+    public String generate(IngestProperties.Rss.Feed feed, SyndEntry entry) {
         Objects.requireNonNull(feed, "feed must not be null");
         Objects.requireNonNull(entry, "entry must not be null");
 

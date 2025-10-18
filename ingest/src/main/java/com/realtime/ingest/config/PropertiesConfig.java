@@ -9,11 +9,6 @@ import com.realtime.ingest.support.YamlPropertySourceFactory;
 @Configuration
 @PropertySource(value = "classpath:feeds.yml", factory = YamlPropertySourceFactory.class)
 @PropertySource(value = "classpath:dumps.yml", factory = YamlPropertySourceFactory.class)
-@EnableConfigurationProperties({
-    RssFeedProperties.class,
-    WikiDumpProperties.class,
-    YoutubeProperties.class,
-    IngestKafkaTopicsProperties.class
-})
+@EnableConfigurationProperties(IngestProperties.class)
 public class PropertiesConfig {
 }

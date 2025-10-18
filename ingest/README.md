@@ -48,5 +48,5 @@ Wiki Dump · RSS · Youtube 데이터를 정기적으로 수집하여 MongoDB `r
 ```bash
 ./gradlew :ingest:test
 ```
-
+  
 단위 테스트는 `DedupKeyService` 와 `RawDocService` 의 핵심 로직(카노니컬 URL 생성, 중복 처리, Kafka 전송)을 검증합니다.

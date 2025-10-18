@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 @Configuration
 public class MongoConfig {
@@ -31,5 +37,21 @@ public class MongoConfig {
             .maxSize(maxSize)
             .minSize(minSize)
             .maxWaitTime(maxWaitTime.toMillis(), TimeUnit.MILLISECONDS));
+    }
+
+    @Bean
+    public MappingMongoConverter mappingMongoConverter(
+        MongoDatabaseFactory mongoDatabaseFactory,
+        MongoMappingContext mongoMappingContext,
+        MongoCustomConversions mongoCustomConversions
+    ) {
+        MappingMongoConverter mappingMongoConverter = new MappingMongoConverter(
+            new DefaultDbRefResolver(mongoDatabaseFactory),
+            mongoMappingContext
+        );
+        mappingMongoConverter.setCustomConversions(mongoCustomConversions);
+        mappingMongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
+        mappingMongoConverter.afterPropertiesSet();
+        return mappingMongoConverter;
     }
 }

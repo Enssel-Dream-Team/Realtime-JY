@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import com.realtime.ingest.config.IngestKafkaTopicsProperties;
+import com.realtime.ingest.config.IngestProperties;
 import com.realtime.ingest.domain.IngestRawDocMessage;
 import com.realtime.ingest.domain.RawDoc;
 import com.realtime.ingest.domain.SourceType;
@@ -28,18 +28,18 @@ public class RawDocService {
     private final RawDocRepository repository;
     private final DedupKeyService dedupKeyService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final IngestKafkaTopicsProperties kafkaTopics;
+    private final IngestProperties ingestProperties;
 
     public RawDocService(
         RawDocRepository repository,
         DedupKeyService dedupKeyService,
         KafkaTemplate<String, Object> kafkaTemplate,
-        IngestKafkaTopicsProperties kafkaTopics
+        IngestProperties ingestProperties
     ) {
         this.repository = repository;
         this.dedupKeyService = dedupKeyService;
         this.kafkaTemplate = kafkaTemplate;
-        this.kafkaTopics = kafkaTopics;
+        this.ingestProperties = ingestProperties;
     }
 
     public RawDocSaveResult storeRawDoc(RawDoc rawDoc) {
@@ -62,7 +62,7 @@ public class RawDocService {
         SourceType sourceType = rawDoc.getSource();
         IngestRawDocMessage.MongoReference mongoReference =
             new IngestRawDocMessage.MongoReference("realtime", "raw_docs", rawDoc.getId());
-        String topic = kafkaTopics.topicFor(sourceType);
+        String topic = ingestProperties.getKafka().getTopics().topicFor(sourceType);
         IngestRawDocMessage message = new IngestRawDocMessage(
             dedupKey,
             sourceType,

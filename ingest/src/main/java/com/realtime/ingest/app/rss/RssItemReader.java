@@ -16,7 +16,7 @@ import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.stereotype.Component;
 
-import com.realtime.ingest.config.RssFeedProperties;
+import com.realtime.ingest.config.IngestProperties;
 import com.rometools.rome.feed.synd.SyndEntry;
 
 @Component
@@ -25,18 +25,18 @@ public class RssItemReader implements ItemStreamReader<RssFeedEntry>, ItemStream
     private static final Logger log = LoggerFactory.getLogger(RssItemReader.class);
 
     private final RssFeedClient feedClient;
-    private final RssFeedProperties feedProperties;
+    private final IngestProperties ingestProperties;
     private final RssEntryIdGenerator entryIdGenerator;
     private Iterator<RssFeedEntry> iterator;
     private final Map<String, FeedState> runtimeState = new ConcurrentHashMap<>();
 
     public RssItemReader(
         RssFeedClient feedClient,
-        RssFeedProperties feedProperties,
+        IngestProperties ingestProperties,
         RssEntryIdGenerator entryIdGenerator
     ) {
         this.feedClient = feedClient;
-        this.feedProperties = feedProperties;
+        this.ingestProperties = ingestProperties;
         this.entryIdGenerator = entryIdGenerator;
     }
 
@@ -54,7 +54,7 @@ public class RssItemReader implements ItemStreamReader<RssFeedEntry>, ItemStream
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         List<RssFeedEntry> entries = new ArrayList<>();
-        for (RssFeedProperties.Feed feed : feedProperties.getFeeds()) {
+        for (IngestProperties.Rss.Feed feed : ingestProperties.getRss().getFeeds()) {
             FeedState previousState = loadState(executionContext, feed.getId());
             feedClient.fetch(feed.getUrl(), previousState.etag(), previousState.lastModified())
                 .ifPresent(response -> {

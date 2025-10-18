@@ -24,21 +24,21 @@ import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.stereotype.Component;
 
-import com.realtime.ingest.config.WikiDumpProperties;
+import com.realtime.ingest.config.IngestProperties;
 
 @Component
 public class WikiDumpItemReader implements ItemStreamReader<WikiPage>, ItemStream {
 
     private static final Logger log = LoggerFactory.getLogger(WikiDumpItemReader.class);
 
-    private final WikiDumpProperties properties;
-    private Iterator<WikiDumpProperties.Dump> dumpIterator;
-    private WikiDumpProperties.Dump currentDump;
+    private final IngestProperties ingestProperties;
+    private Iterator<IngestProperties.WikiDump.Dump> dumpIterator;
+    private IngestProperties.WikiDump.Dump currentDump;
     private XMLStreamReader xmlReader;
     private InputStream currentStream;
 
-    public WikiDumpItemReader(WikiDumpProperties properties) {
-        this.properties = properties;
+    public WikiDumpItemReader(IngestProperties ingestProperties) {
+        this.ingestProperties = ingestProperties;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class WikiDumpItemReader implements ItemStreamReader<WikiPage>, ItemStrea
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        this.dumpIterator = properties.getDumps().iterator();
+        this.dumpIterator = ingestProperties.getWikidump().getDumps().iterator();
     }
 
     @Override

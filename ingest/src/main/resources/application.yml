@@ -39,11 +39,10 @@ ingest:
       max-size: ${INGEST_MONGO_POOL_MAX_SIZE:30}
       min-size: ${INGEST_MONGO_POOL_MIN_SIZE:10}
       max-wait: ${INGEST_MONGO_POOL_MAX_WAIT:PT30S}
-
-youtube:
-  api-key: ${YOUTUBE_API_KEY:}
-  regionCode: ${YOUTUBE_REGION_CODE:KR}
-  maxResults: ${YOUTUBE_MAX_RESULTS:25}
+  youtube:
+    api-key: ${YOUTUBE_API_KEY:}
+    region-code: ${YOUTUBE_REGION_CODE:KR}
+    max-results: ${YOUTUBE_MAX_RESULTS:25}
 
 logging:
   level:

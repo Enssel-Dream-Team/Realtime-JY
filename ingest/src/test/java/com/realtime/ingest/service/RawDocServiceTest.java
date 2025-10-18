@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
-import com.realtime.ingest.config.IngestKafkaTopicsProperties;
+import com.realtime.ingest.config.IngestProperties;
 import com.realtime.ingest.domain.RawDoc;
 import com.realtime.ingest.domain.SourceType;
 import com.realtime.ingest.repository.RawDocRepository;
@@ -36,15 +36,15 @@ class RawDocServiceTest {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private RawDocService rawDocService;
-    private IngestKafkaTopicsProperties kafkaTopics;
+    private IngestProperties ingestProperties;
 
     @BeforeEach
     void setUp() {
-        kafkaTopics = new IngestKafkaTopicsProperties();
-        kafkaTopics.setRss("topic-rss");
-        kafkaTopics.setWikidump("topic-wikidump");
-        kafkaTopics.setYoutube("topic-youtube");
-        rawDocService = new RawDocService(repository, new DedupKeyService(), kafkaTemplate, kafkaTopics);
+        ingestProperties = new IngestProperties();
+        ingestProperties.getKafka().getTopics().setRss("topic-rss");
+        ingestProperties.getKafka().getTopics().setWikiDump("topic-wikidump");
+        ingestProperties.getKafka().getTopics().setYoutube("topic-youtube");
+        rawDocService = new RawDocService(repository, new DedupKeyService(), kafkaTemplate, ingestProperties);
     }
 
     @Test

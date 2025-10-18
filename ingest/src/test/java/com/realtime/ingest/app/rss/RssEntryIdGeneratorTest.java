@@ -6,18 +6,18 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.realtime.ingest.config.RssFeedProperties;
+import com.realtime.ingest.config.IngestProperties;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
 
 class RssEntryIdGeneratorTest {
 
     private RssEntryIdGenerator generator;
-    private RssFeedProperties.Feed feed;
+    private IngestProperties.Rss.Feed feed;
 
     @BeforeEach
     void setUp() {
         generator = new RssEntryIdGenerator();
-        feed = new RssFeedProperties.Feed();
+        feed = new IngestProperties.Rss.Feed();
         feed.setId("yonhap");
     }
 

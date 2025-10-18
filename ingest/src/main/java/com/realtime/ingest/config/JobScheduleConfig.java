@@ -45,11 +45,6 @@ public class JobScheduleConfig {
         launchJob("rssJob");
     }
 
-    // @Scheduled(cron = "${ingest.schedule.wiki-cron:0 30 2 * * *}")
-    // public void scheduleWikiJob() {
-    //     launchJob("wikiDumpJob");
-    // }
-
     @Scheduled(
         initialDelayString = "${ingest.schedule.youtube-initial-delay:PT1M}",
         fixedDelayString = "${ingest.schedule.youtube-fixed-delay:PT30M}"

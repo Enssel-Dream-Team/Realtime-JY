@@ -12,25 +12,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.realtime.ingest.config.YoutubeProperties;
+import com.realtime.ingest.config.IngestProperties;
 
 @Component
 public class YoutubeApiClient {
 
     private static final Logger log = LoggerFactory.getLogger(YoutubeApiClient.class);
 
-    private final YoutubeProperties properties;
+    private final IngestProperties ingestProperties;
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
 
-    public YoutubeApiClient(YoutubeProperties properties, WebClient.Builder builder, ObjectMapper objectMapper) {
-        this.properties = properties;
+    public YoutubeApiClient(IngestProperties ingestProperties, WebClient.Builder builder, ObjectMapper objectMapper) {
+        this.ingestProperties = ingestProperties;
         this.webClient = builder.baseUrl("https://www.googleapis.com/youtube/v3").build();
         this.objectMapper = objectMapper;
     }
 
     public List<YoutubeVideo> fetchTrending() {
-        if (properties.getApiKey() == null || properties.getApiKey().isBlank()) {
+        IngestProperties.Youtube youtube = ingestProperties.getYoutube();
+        if (youtube.getApiKey() == null || youtube.getApiKey().isBlank()) {
             log.warn("YouTube API key is missing. Skipping trending fetch.");
             return List.of();
         }
@@ -40,9 +41,9 @@ public class YoutubeApiClient {
                     .path("/videos")
                     .queryParam("part", "snippet")
                     .queryParam("chart", "mostPopular")
-                    .queryParam("regionCode", properties.getRegionCode())
-                    .queryParam("maxResults", properties.getMaxResults())
-                    .queryParam("key", properties.getApiKey())
+                    .queryParam("regionCode", youtube.getRegionCode())
+                    .queryParam("maxResults", youtube.getMaxResults())
+                    .queryParam("key", youtube.getApiKey())
                     .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
