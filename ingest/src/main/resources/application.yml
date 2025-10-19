@@ -1,0 +1,55 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: ingest
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:batchmeta;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/realtime}
+      database: ${MONGODB_DATABASE:realtime}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    producer:
+      properties:
+        spring.json.add.type.headers: false
+
+ingest:
+  kafka:
+    topics:
+      rss: ${INGEST_KAFKA_TOPIC_RSS:ingest.cleansing.raw_rss}
+      wikidump: ${INGEST_KAFKA_TOPIC_WIKIDUMP:ingest.cleansing.raw_wikidump}
+      youtube: ${INGEST_KAFKA_TOPIC_YOUTUBE:ingest.cleansing.raw_youtube}
+  schedule:
+    rss-cron: ${INGEST_SCHEDULE_RSS_CRON:0 0/30 * * * *}
+    wiki-cron: ${INGEST_SCHEDULE_WIKI_CRON:0 30 2 * * *}
+    youtube-initial-delay: ${INGEST_SCHEDULE_YOUTUBE_INITIAL_DELAY:PT1M}
+    youtube-fixed-delay: ${INGEST_SCHEDULE_YOUTUBE_FIXED_DELAY:PT30M}
+  mongo:
+    pool:
+      max-size: ${INGEST_MONGO_POOL_MAX_SIZE:30}
+      min-size: ${INGEST_MONGO_POOL_MIN_SIZE:10}
+      max-wait: ${INGEST_MONGO_POOL_MAX_WAIT:PT30S}
+  youtube:
+    api-key: ${YOUTUBE_API_KEY:}
+    region-code: ${YOUTUBE_REGION_CODE:KR}
+    max-results: ${YOUTUBE_MAX_RESULTS:25}
+
+logging:
+  level:
+    com.realtime.ingest: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

@@ -26,9 +26,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-# Local tooling
-gpt-conversation.yaml
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -38,8 +35,3 @@ gpt-conversation.yaml
 
 ### VS Code ###
 .vscode/
-
-# Environment files & local data
-.env
-data/
-logs/
