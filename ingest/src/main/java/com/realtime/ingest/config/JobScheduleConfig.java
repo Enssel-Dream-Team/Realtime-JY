@@ -1,6 +1,8 @@
 package com.realtime.ingest.config;
 
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,16 @@ public class JobScheduleConfig {
     public void launchWikiJobOnStartup() {
         log.info("애플리케이션 기동 완료 후 위키 덤프 작업을 실행합니다.");
         launchJob("wikiDumpJob");
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void scheduleInitialRssJob() {
+        CompletableFuture
+            .delayedExecutor(1, TimeUnit.MINUTES)
+            .execute(() -> {
+                log.info("애플리케이션 기동 1분 후 RSS 수집 작업을 실행합니다.");
+                launchJob("rssJob");
+            });
     }
 
     @Scheduled(cron = "${ingest.schedule.rss-cron:0 0/30 * * * *}")
