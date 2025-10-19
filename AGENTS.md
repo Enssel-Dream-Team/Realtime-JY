@@ -59,7 +59,7 @@ Wiki Dump, 언론사별 기사, SNS API에서 데이터를 수집하여 실시�
 # Commit RULE
 - 모든 commit은 한국어로 작성 
 - commit은 [제목], [개요], [작업 내용]를 포함
-- 제목 형식: feat, chore, fix, test + 커밋명
+- 제목 형식: feat:, chore:, fix:, test: + 커밋명
   - feat: Wiki Dump 수집 구현
   - chore: Docker-compose 내용 변경
   - fix: Mongo DB에 데이터가 들어가지 않는 문제 해결
