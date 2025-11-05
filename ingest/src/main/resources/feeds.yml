@@ -1,0 +1,15 @@
+ingest:
+  rss:
+    feeds:
+      - id: yonhap
+        name: Yonhap News Television
+        url: https://www.yonhapnewstv.co.kr/browse/feed/
+      - id: yna
+        name: Yonhap News Agency
+        url: https://www.yna.co.kr/rss/news.xml
+      - id: jtbc
+        name: JTBC News
+        url: https://news-ex.jtbc.co.kr/v1/get/rss/issue
+      - id: sbs
+        name: SBS Breaking News
+        url: https://news.sbs.co.kr/news/newsflashRssFeed.do?plink=RSSREADER
